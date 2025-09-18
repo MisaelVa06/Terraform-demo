@@ -1,6 +1,6 @@
  ###OUTPUTS
 
-output "server" {
+output "outputs" {
   description = "Datos del servidor desplegado"
   value = {
     name      = var.server_name
