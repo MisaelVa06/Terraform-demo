@@ -1,11 +1,13 @@
- ###OUTPUTS
+###Modulos###
 
-output "server" {
-  description = "Datos del servidor desplegado"
-  value = {
-    name      = var.server_name
-    public_ip = aws_instance.nginx_server.public_ip
-    public_dns = aws_instance.nginx_server.public_dns
-    id        = aws_instance.nginx_server.id
-  }
+module "nginx_server_dev" {
+  source = "./modules/nginx_server_module"
+
+  ami_id = "ami-08982f1c5bf93d976"
+  instance_type = "t3.micro"
+  server_name = "nginx_server_dev"
+  enviroment = "Prod"
+  region = "us-east-1"
+  Owner = "Misal"
+    
 }
