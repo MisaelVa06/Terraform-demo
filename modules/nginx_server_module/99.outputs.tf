@@ -1,6 +1,6 @@
  ###OUTPUTS
 
-output "nginx_server" {
+output "server" {
   description = "Datos del servidor desplegado"
   value = {
     name      = var.server_name

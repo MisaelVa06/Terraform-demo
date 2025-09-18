@@ -7,7 +7,11 @@ module "nginx_server_dev" {
   instance_type = "t3.micro"
   server_name = "nginx_server_dev"
   enviroment = "Prod"
-  region = "us-east-1"
   Owner = "Misal"
     
+}
+
+output "nginx_server_dev" {
+  description = "Datos del servidor desplegado"
+  value       = module.nginx_server_dev.server
 }
