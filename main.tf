@@ -1,12 +1,45 @@
+    ###Variables
+   
+variable "aim_id" {
+  default     = "ami-08982f1c5bf93d976"
+  description = "ID de AMI para instancia EC2"
+}
+
+variable "instance_type" {
+  default     = "m7i-flex.large"
+  description = "Tipo de instancia EC2"
+}
+
+variable "server_name" {
+  default     = "nginx_server"
+  description = "Nombre de la instancia EC2"
+}
+
+variable "enviroment" {
+  default     = "test"
+  description = "ambiente de la aplicacion"
+}
+
+variable "region" {
+  default     = "us-east-1"
+  description = "region de la instancia"
+}
+
+variable "Owner" {
+  default     = "Misael Vasquez"
+  description = "Owner de la instancia"
+}
+
+
 provider "aws"{
-    region = "us-east-1"
+    region = var.region
 }
 
 
 resource "aws_instance" "nginx_server" {
 
-    ami = "ami-08982f1c5bf93d976"
-    instance_type ="m7i-flex.large"
+    ami = var.aim_id
+    instance_type = var.instance_type
 
     user_data = <<-EOF
 		#!/bin/bash
@@ -22,13 +55,22 @@ resource "aws_instance" "nginx_server" {
     vpc_security_group_ids = [
         aws_security_group.nginx_server_SG.id
     ]
+
+    ###TAGS
+    tags = {
+        Name = var.server_name
+        enviroment = var.enviroment
+        Owner = var.Owner
+    }
+
+
 }
 
     ###KEY PAIR
 
 resource "aws_key_pair" "nginx_server_ssh"{
 
-    key_name = "nginx_server_ssh"
+    key_name = "${var.server_name}_ssh"
     public_key = file("nginx-server.key.pub")
 
 }
@@ -37,7 +79,7 @@ resource "aws_key_pair" "nginx_server_ssh"{
    ###SECURITY GROUPS
 resource "aws_security_group" "nginx_server_SG"{
 
-    name= "nginx_server_SG"
+    name= "${var.server_name}_SG"
     description = "Security group for only port 22 and 80 available"
 
     ingress{
@@ -67,10 +109,12 @@ resource "aws_security_group" "nginx_server_SG"{
 
     ###OUTPUTS
 
-output "Server_public_IP" {
-  value       = aws_instance.nginx_server.public_ip
-}
-
-output "Server_public_DNS" {
-  value       = aws_instance.nginx_server.public_dns
+output "server" {
+  description = "Datos del servidor desplegado"
+  value = {
+    name      = var.server_name
+    public_ip = aws_instance.nginx_server.public_ip
+    public_dns = aws_instance.nginx_server.public_dns
+    id        = aws_instance.nginx_server.id
+  }
 }
